@@ -1,0 +1,44 @@
+(*This code gives the interactive plot for the intensity profile/the polynomials along the locus ζg=ζh,i.e. the Bragg condition for reflection g, in three-beam electorn diffraction at 200kV*)
+ClearAll["Global`*"];
+
+Manipulate[
+ U1 = 0.0007289 Vg ;     (* U1=σVg, where σ is the interaction constant at 200kV*)          
+ U2 = 0.0007289 Vh;
+ U3 = 0.0007289 Vhg;
+ Sh = 2 Pi ζh;
+ b = -2 Sh;
+ c = Sh^2 - U1^2 - U2^2 - U3^2;
+ d = Sh (U1^2 + U2^2) - 2 U1 U2 U3 Cos[ϕ];
+ Q = (3 c - b^2)/9;
+ R = (-2 b^3 + 9 b c - 27 d)/54;
+ θ = ArcCos[R/(-Q)^(3/2)];
+ λ1 = 2 (-Q)^(1/2) Cos[θ/3] - b/3;
+ λ3 = 2 (-Q)^(1/2) Cos[(θ + 2 Pi)/3] - b/3;
+ λ2 = 2 (-Q)^(1/2) Cos[(θ + 4 Pi)/3] - b/3;
+ μ1 = λ2 - λ3; μ2 = λ3 - λ1; μ3 = λ1 - λ2;
+ 
+ C1 = (λ2 λ3 + U1^2 + U2^2)/(μ2 μ3);
+ C2 = (λ1 λ3 + U1^2 + U2^2)/(μ1 μ3);
+ C3 = (λ1 λ2 + U1^2 + U2^2)/(μ1 μ2);
+ K = U1 U2 U3 Sin[ϕ];
+ ΔIg = 16 K (Sin[μ1 z/2]/μ1) (Sin[μ2 z/2]/μ2) (Sin[μ3 z/2]/μ3);(*The intensity difference I(g)-I(-g) at their corresponding three-beam conditions with h and -h respectively*)
+ I0 = 1 + 2 C1 C3 ( Cos[μ2 z] - 1) + 2 C1 C2 (Cos[μ3 z] - 1) + 2 C2 C3 ( Cos[μ1 z] - 1);(*The intensity of the central beam *)
+ G0 = U3 U2/U1;
+ G1 = (-λ2 - λ3)/(μ2 μ3);
+ G2 = (-λ1 - λ3)/(μ1 μ3);
+ G3 = (-λ2 - λ1)/(μ1 μ2);
+ Ig = U1^2 ((2 Cos[μ1 z] - 2) (G0^2/(μ1^2  μ2 μ3) + G2 G3) +  (2 Cos[μ1 z + ϕ] - 2 Cos[ϕ]) G0 G2/(μ1 μ2) + (2 Cos[μ1 z - ϕ] - 2 Cos[ϕ]) G0 G3/(μ1 μ3) + (2 Cos[μ2 z] - 2) (G0^2/(μ1 μ2^2 μ3) + G1 G3) +
+     (2 Cos[μ2 z - ϕ] - 2 Cos[ϕ]) G0 G1/(μ1 μ2) + (2 Cos[μ2 z + ϕ] - 2 Cos[ϕ]) G0 G3/(μ2 μ3) +
+     (2 Cos[μ3 z] - 2) (G0^2/(μ1 μ2 μ3^2) + G1 G2) +
+     (2 Cos[μ3 z + ϕ] - 2 Cos[ϕ]) G0 G1/(μ1 μ3) + (2 Cos[μ3 z - ϕ] - 2 Cos[ϕ]) G0 G2/(μ2 μ3));
+ (*This intensity expression for relfection g can splitted into three terms. The term led by (2Cos[μ1 z]-2) is much larger than the other two terms on the left hand side of the plot, while the term led by (2Cos[μ3 z]-2) is much larger than the other two terms on the right hand side.This makes the three-beam intensity on either side hehave like two-beam intensity*)
+ Igright = U1^2 ((2 Cos[μ1 z] - 2) (G0^2/(μ1^2  μ2 μ3) + G2 G3) +  (2 Cos[μ1 z + ϕ] - 2 Cos[ϕ]) G0 G2/(μ1 μ2) + (2 Cos[μ1 z - ϕ] - 2 Cos[ϕ]) G0 G3/(μ1 μ3));
+ Igleft =
+  U1^2 ((2 Cos[μ3 z] - 2) (G0^2/(μ1 μ2 μ3^2) + G1 G2) +
+     (2 Cos[μ3 z + ϕ] - 2 Cos[ϕ]) G0 G1/(μ1 μ3) + (2 Cos[μ3 z - ϕ] - 2 Cos[ϕ]) G0 G2/(μ2 μ3));
+ Igleftsimple = U1^2/(μ1 μ2 μ3^2) (Cos[μ3 z] - 1) (2 G0^2 - 4 G0 λ3 Cos[ϕ] + 2 λ3^2);
+ 
+  Plot[{I0, ΔIg},
+  {ζh, -0.005, 0.005}, PlotRange -> {-1
+    , 1}, BaseStyle -> {FontSize -> 18}], {z, 0, 2000}, {Vg, 0.1, 7}, {Vh, 0.1, 7}, {Vhg, 0.00001, 7}, {ϕ, -Pi, Pi}]
+    (*Substitute I0,ΔIg with C1C2, C2C3, C3C1 to visualise the polynomials*)
