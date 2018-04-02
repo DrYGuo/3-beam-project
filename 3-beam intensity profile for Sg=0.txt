@@ -1,4 +1,4 @@
-(*This code gives the interactive plot for the intensity profile along the locus ζg=0,i.e. the Bragg condition for reflection g, in three-beam electorn diffraction at 200kV*)
+(*This Mathematica code gives the interactive plot for the intensity profile along the locus ζg=0,i.e. the Bragg condition for reflection g, in three-beam electorn diffraction at 200kV. Please copy the following lines into Wolfram Mathematica and run it.*)
 ClearAll["Global`*"];
 
 Manipulate[
@@ -41,4 +41,4 @@ Manipulate[
   Plot[{Ig, Igleft, Igright}, 
   {ζh, -0.005, 0.005}, PlotRange -> {-1
     , 1}], {z, 0, 2000}, {Vg, 0.1, 7}, {Vh, 0.1, 7}, {Vhg, 0.00001, 7}, {ϕ, -Pi, Pi}] 
-    (*substitute Ig, Igleft, Igright with μ1 μ2 μ3 *)
+    (*substitute Ig, Igleft, Igright with μ1 μ2 μ3 to visualise the gaps of the dispersion surfaces*)
