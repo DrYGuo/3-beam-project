@@ -1,0 +1,55 @@
+ClearAll["Global`*"];
+(*The interactive plot shows a comparison between the kinematic approximation, which results in an intensity profile Igkinematic along Sg=0, with the current three-beam approach which results in ΔIg. The kinematic approximation can fail at small thickness if three structure factors are large. For example, by setting z=500, Vg=4, Vh=3, Vhg=2, ϕ=Pi/4, one can see that the intensity profile derived from kinematic approximation deviate from the exact three-beam intensity by a large amount (and it goes beyond the unity 1) while the intensity difference between the Friedel pair ΔIg can still be used for determining the sign of ϕ. The plot range may need to be adjusted to see the whole range of Ikinematic*)
+Manipulate[
+ U1 = 0.0007289 Vg ;               
+ U2 = 0.0007289 Vh;
+ U3 = 0.0007289 Vhg;
+ Sh = 2 Pi ζh;
+ b = -Sh;
+ c = -U1^2 - U2^2 - U3^2;
+ d = Sh U1^2 - 2 U1 U2 U3 Cos[ϕ];
+ Q = (3 c - b^2)/9;
+ R = (-2 b^3 + 9 b c - 27 d)/54;
+ θ = ArcCos[R/(-Q)^(3/2)];
+ λ1 = 2 (-Q)^(1/2) Cos[θ/3] - b/3;
+ λ3 = 2 (-Q)^(1/2) Cos[(θ + 2 Pi)/3] - b/3;
+ λ2 = 2 (-Q)^(1/2) Cos[(θ + 4 Pi)/3] - b/3;
+ μ1 = λ2 - λ3; μ2 = λ3 - λ1; μ3 = λ1 - λ2;
+ 
+ C1 = (λ2 λ3 + U1^2 + U2^2)/(μ2 μ3);
+ C2 = (λ1 λ3 + U1^2 + U2^2)/(μ1 μ3);
+ C3 = (λ1 λ2 + U1^2 + U2^2)/(μ1 μ2);
+ K = U1 U2 U3 Sin[ϕ];
+ ΔIg = 16 K (Sin[μ1 z/2]/μ1) (Sin[μ2 z/2]/μ2) (Sin[μ3 z/2]/μ3);(*Ig-I-g near the exact three-beam condition*)
+ I0 = 1 + 2 C1 C3 ( Cos[μ2 z] - 1) + 2 C1 C2 (Cos[μ3 z] - 1) + 2 C2 C3 ( Cos[μ1 z] - 1);
+ G0 = U3 U2/U1;
+ G1 = (-λ2 - λ3)/(μ2 μ3);
+ G2 = (-λ1 - λ3)/(μ1 μ3);
+ G3 = (-λ2 - λ1)/(μ1 μ2);
+ Ig = U1^2 ((2 Cos[μ1 z] - 2) (G0^2/(μ1^2  μ2 μ3) + G2 G3) +  (2 Cos[μ1 z + ϕ] - 2 Cos[ϕ]) G0 G2/(μ1 μ2) + (2 Cos[μ1 z - ϕ] - 2 Cos[ϕ]) G0 G3/(μ1 μ3) + (2 Cos[μ2 z] - 2) (G0^2/(μ1 μ2^2 μ3) + G1 G3) +
+     (2 Cos[μ2 z - ϕ] - 2 Cos[ϕ]) G0 G1/(μ1 μ2) + (2 Cos[μ2 z + ϕ] - 2 Cos[ϕ]) G0 G3/(μ2 μ3) +
+     (2 Cos[μ3 z] - 2) (G0^2/(μ1 μ2 μ3^2) + G1 G2) +
+     (2 Cos[μ3 z + ϕ] - 2 Cos[ϕ]) G0 G1/(μ1 μ3) + (2 Cos[μ3 z - ϕ] - 2 Cos[ϕ]) G0 G2/(μ2 μ3));
+ K = 39.87466;
+ σ = 0.0007289;
+ Ug = (K σ/Pi) Vg;
+ Uh = (K σ/Pi) Vh;
+ Uhg = (K σ/Pi) Vhg;
+ x = Pi ζh z;
+ βg = Pi Ug z/K;
+ βh = Pi Uh z/K;
+ βhg = Pi Uhg z/K;
+ ΔIg = 16 U1 U2 U3 Sin[ϕ] (Sin[μ1 z/2]/μ1) (Sin[μ2 z/2]/μ2) (Sin[μ3 z/2]/μ3);
+ Igkinematic = βg βh βhg ((-1/x) (1 - Sin[2 x]/(2 x)) Cos[ϕ] + Sin[ϕ] (Sin[x]/x)^2 ) + βg^2;
+ 
+  Plot[{Ig, Igkinematic, ΔIg},
+  {ζh, -0.005, 0.005}, PlotRange -> {-1, 3},
+  AxesLabel -> {"\!\(\*
+StyleBox[\"ζh\",\nFontSize->14]\)\!\(\*
+StyleBox[\"(\",\nFontSize->14]\)\!\(\*
+StyleBox[\"1\",\nFontSize->14]\)\!\(\*
+StyleBox[\"/\",\nFontSize->16]\)\!\(\*
+StyleBox[\"Å\",\nFontSize->16]\)\!\(\*
+StyleBox[\")\",\nFontSize->14]\)", "\!\(\*
+StyleBox[\"I\",\nFontSize->16]\)\!\(\*
+StyleBox[\"g\",\nFontSize->14]\)"}, PlotStyle -> {Blue, Red, Green, Orange}, PlotLegends -> {"Exact three-beam dynamic diffraction", "Perturbation of  kinematic diffraction", "ΔIg"}], {z, 1, 2000}, {Vg, 0.1, 7}, {Vh, 0.1, 7}, {Vhg, 0.00001, 7}, {ϕ, -Pi, Pi}]
